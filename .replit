@@ -1,0 +1,9 @@
+entrypoint = "index.js"
+modules = ["nodejs-18:v18.17.1"]
+
+[nix]
+channel = "stable-23_05"
+
+[deployment]
+run = ["node", "index.js"]
+deploymentTarget = "cloudrun"
