@@ -392,7 +392,8 @@ async function handleRequestAccept(interaction) {
 	const acceptEmbed = new EmbedBuilder()
 		.setTitle(config.embeds.requestAccepted.title)
 		.setDescription(config.embeds.requestAccepted.description)
-		.setColor(config.colors.success);
+		.setColor(config.colors.success)
+		.setFooter({ text: config.embeds.requestAccepted.footer });
 
 	const joinRow = new ActionRowBuilder()
 		.addComponents(
@@ -513,6 +514,9 @@ async function handleJoinVoice(interaction) {
 	try {
 		await member.voice.setChannel(targetChannel);
 		pendingRequests.delete(userId);
+
+		// Delete the "Join Voice" message after successful move
+		await interaction.message.delete();
 
 		await interaction.reply({
 			content: config.messages.moveSuccess,
