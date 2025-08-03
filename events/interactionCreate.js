@@ -110,13 +110,13 @@ async function handleVoiceRequest(interaction) {
 	}
 
 	// Channel Owner ermitteln
-	const channelOwner = await getChannelOwner(targetVoiceChannel);
-	if (!channelOwner) {
+	const channelOwners = await getChannelOwners(targetVoiceChannel);
+	if (channelOwners.length === 0) {
 		await interaction.reply({ content: config.messages.ownerNotFound, ephemeral: true });
 		return;
 	}
 
-	if (channelOwner.id === userId) {
+	if (channelOwners.some(owner => owner.id === userId)) {
 		await interaction.reply({ content: config.messages.selfRequest, ephemeral: true });
 		return;
 	}
@@ -144,7 +144,7 @@ async function handleVoiceRequest(interaction) {
 	// Request im Voice Channel des Besitzers senden
 	try {
 		await targetVoiceChannel.send({
-			content: `<@${channelOwner.id}>`,
+			content: channelOwners.map(owner => `<@${owner.id}>`).join(' '),
 			embeds: [requestEmbed],
 			components: [requestRow]
 		});
@@ -156,7 +156,7 @@ async function handleVoiceRequest(interaction) {
 		pendingRequests.set(userId, {
 			requester: member,
 			targetChannel: targetVoiceChannel,
-			owner: channelOwner
+			owners: channelOwners
 		});
 
 		await interaction.reply({
@@ -380,7 +380,7 @@ async function handleRequestAccept(interaction) {
 		return;
 	}
 
-	if (interaction.user.id !== request.owner.id) {
+	if (!request.owners.some(owner => owner.id === interaction.user.id)) {
 		return interaction.reply({ content: config.messages.onlyOwner, ephemeral: true });
 	}
 
@@ -415,7 +415,7 @@ async function handleRequestDecline(interaction) {
 		return interaction.reply({ content: config.messages.requestNotFound, ephemeral: true });
 	}
 
-	if (interaction.user.id !== request.owner.id) {
+	if (!request.owners.some(owner => owner.id === interaction.user.id)) {
 		return interaction.reply({ content: config.messages.onlyOwner, ephemeral: true });
 	}
 
@@ -485,27 +485,24 @@ async function handleJoinVoice(interaction) {
 }
 
 // Hilfsfunktion um Channel Owner zu finden
-async function getChannelOwner(channel) {
-	try {
-		const permissions = channel.permissionOverwrites.cache;
-		
-		for (const [id, overwrite] of permissions) {
-			// Überprüfen ob es ein User ist (nicht Rolle oder Bot)
-			if (overwrite.type === 1) { // User permission overwrite
-				const member = await channel.guild.members.fetch(id).catch(() => null);
-				if (member && !member.user.bot) {
-					// Überprüfen ob der User die spezifische Berechtigung 1049600 hat
-					const userPermissions = channel.permissionsFor(member);
-					const targetPermission = 1049600n;
-                    if ((userPermissions.bitfield & targetPermission) === targetPermission) {
-                        return member;
+async function getChannelOwners(channel) {
+    const owners = [];
+    try {
+        const permissions = channel.permissionOverwrites.cache;
+        const targetPermission = 1049600n;
+
+        for (const [id, overwrite] of permissions) {
+            if (overwrite.type === 1) { // User permission overwrite
+                if ((overwrite.allow.bitfield & targetPermission) === targetPermission) {
+                    const member = await channel.guild.members.fetch(id).catch(() => null);
+                    if (member && !member.user.bot) {
+                        owners.push(member);
                     }
-				}
-			}
-		}
-		return null;
-	} catch (error) {
-		console.error('Fehler beim Ermitteln des Channel Owners:', error);
-		return null;
-	}
+                }
+            }
+        }
+    } catch (error) {
+        console.error('[ERROR] Fehler beim Ermitteln der Channel Owners:', error);
+    }
+    return owners;
 }
