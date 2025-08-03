@@ -19,7 +19,7 @@ module.exports = {
         if (message.author.bot) return;
         
         // Prüfe ob es sich um eine Umfrage handelt
-        if (message.type === MessageType.Poll) {
+        if (message.poll) {
             // Prüfe ob der User eine der erlaubten Rollen hat
             const member = message.member;
             if (!member) return;
