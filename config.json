@@ -71,7 +71,7 @@
     "selfRequest": "Du kannst dir nicht selbst eine Anfrage senden.",
     "requestNotFound": "❌ Anfrage nicht gefunden oder bereits bearbeitet.",
     "notYourRequest": "❌ Das ist nicht deine Anfrage.",
-    "mustBeInVoice": "❌ Du musst zuerst einem öffentlichen Voice Channel beitreten (z.B. <#1233791786858582107>), bevor du verschoben werden kannst.",
+    "mustBeInVoice": "❌ Du musst zuerst einem öffentlichen Voice Channel beitreten (z.B. <#{joinChannelId}>), bevor du verschoben werden kannst.",
     "moveSuccess": "✅ Du wurdest erfolgreich in den Voice Channel verschoben!",
     "moveError": "❌ Fehler beim Verschieben in den Voice Channel.",
     "kickSuccess": "✅ {user} wurde aus dem Voice Channel gekickt.",
