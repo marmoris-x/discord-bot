@@ -1,7 +1,7 @@
 const { Events, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder } = require('discord.js');
 const config = require('../config.json');
 
-const { categories } = require('../config.json').voiceOwner;
+const { categories } = config.voiceOwner;
 const validCategoryIds = Object.keys(categories);
 
 // Cooldown Maps

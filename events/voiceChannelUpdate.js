@@ -5,7 +5,7 @@ const config = require('../config.json');
 const channelMessageCooldowns = new Map();
 const COOLDOWN_TIME = 30000; // 30 Sekunden
 
-const { categories } = require('../config.json').voiceOwner;
+const { categories } = config.voiceOwner;
 const validCategoryIds = Object.keys(categories);
 
 module.exports = {
