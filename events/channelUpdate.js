@@ -44,26 +44,31 @@ module.exports = {
         }
         
         // Neuen Channel Owner ermitteln (Nutzer mit Berechtigung 1049600)
-        const newChannelOwner = await getChannelOwner(newChannel);
-        
-        if (!newChannelOwner) {
-            console.log(`[DEBUG] Kein neuer Channel Owner gefunden`);
+        const oldOwners = await getChannelOwners(oldChannel);
+        const newOwners = await getChannelOwners(newChannel);
+
+        const oldOwnerIds = oldOwners.map(o => o.id).sort();
+        const newOwnerIds = newOwners.map(o => o.id).sort();
+
+        if (JSON.stringify(oldOwnerIds) === JSON.stringify(newOwnerIds)) {
+            console.log(`[DEBUG] Owner-Liste hat sich nicht geändert, übersprungen.`);
             return;
         }
+
+        // Finde den neuen Owner (der in der neuen Liste ist, aber nicht in der alten)
+        const newChannelOwner = newOwners.find(newO => !oldOwnerIds.includes(newO.id));
         
+        // Finde den alten Owner (der in der alten Liste ist, aber nicht in der neuen)
+        const oldChannelOwner = oldOwners.find(oldO => !newOwnerIds.includes(oldO.id));
+
+        if (!newChannelOwner) {
+            console.log(`[DEBUG] Owner-Wechsel erkannt, aber kein eindeutiger *neuer* Owner gefunden. Übersprungen.`);
+            return;
+        }
+
         console.log(`[DEBUG] Neuer Channel Owner: ${newChannelOwner.displayName}`);
-        
-        // Alten Channel Owner ermitteln
-        const oldChannelOwner = await getChannelOwner(oldChannel);
-        
         if (oldChannelOwner) {
             console.log(`[DEBUG] Alter Channel Owner: ${oldChannelOwner.displayName}`);
-        }
-        
-        // Nur reagieren wenn sich der Owner tatsächlich geändert hat
-        if (oldChannelOwner && newChannelOwner && oldChannelOwner.id === newChannelOwner.id) {
-            console.log(`[DEBUG] Kein Owner-Wechsel, übersprungen`);
-            return;
         }
         
         console.log(`[DEBUG] Owner-Wechsel erkannt, sende Nachricht...`);
@@ -191,36 +196,24 @@ async function hasPermissionChanged(oldChannel, newChannel) {
 }
 
 // Hilfsfunktion um Channel Owner zu finden
-async function getChannelOwner(channel) {
+async function getChannelOwners(channel) {
+    const owners = [];
     try {
         const permissions = channel.permissionOverwrites.cache;
-        console.log(`[DEBUG] Anzahl Permission Overwrites: ${permissions.size}`);
-        
+        const targetPermission = 1049600n;
+
         for (const [id, overwrite] of permissions) {
-            // Überprüfen ob es ein User ist (nicht Rolle oder Bot)
             if (overwrite.type === 1) { // User permission overwrite
-                const member = await channel.guild.members.fetch(id).catch(() => null);
-                if (member && !member.user.bot) {
-                    // Überprüfen ob der User die spezifische Berechtigung 1049600 hat
-                    const userPermissions = channel.permissionsFor(member);
-                    console.log(`[DEBUG] User: ${member.displayName}, Berechtigungen: ${userPermissions.bitfield.toString()}`);
-                    
-                    // Prüfe ob die spezifische Berechtigung 1049600 enthalten ist (Bitwise AND)
-                    const targetPermission = 1049600n;
-                    if ((userPermissions.bitfield & targetPermission) === targetPermission) {
-                        console.log(`[DEBUG] ✅ Channel Owner gefunden: ${member.displayName} (hat Berechtigung 1049600 in ${userPermissions.bitfield})`);
-                        return member;
+                if ((overwrite.allow.bitfield & targetPermission) === targetPermission) {
+                    const member = await channel.guild.members.fetch(id).catch(() => null);
+                    if (member && !member.user.bot) {
+                        owners.push(member);
                     }
-                    
-                    console.log(`[DEBUG] User ${member.displayName} hat Berechtigungen ${userPermissions.bitfield}, Bitwise-Check: ${(userPermissions.bitfield & targetPermission)} === ${targetPermission} = ${(userPermissions.bitfield & targetPermission) === targetPermission}`);
                 }
             }
         }
-        
-        console.log(`[DEBUG] ❌ Kein Channel Owner mit Berechtigung 1049600 gefunden`);
-        return null;
     } catch (error) {
-        console.error('[ERROR] Fehler beim Ermitteln des Channel Owners:', error);
-        return null;
+        console.error('[ERROR] Fehler beim Ermitteln der Channel Owners:', error);
     }
+    return owners;
 }
