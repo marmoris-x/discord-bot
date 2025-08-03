@@ -14,6 +14,7 @@ const ALLOWED_POLL_ROLES = [
 module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
+        console.log(`[POLL_CONTROL] Nachricht von ${message.author.tag} erhalten. Typ: ${message.type}`);
         // Ignoriere Bot-Nachrichten
         if (message.author.bot) return;
         
