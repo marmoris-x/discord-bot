@@ -378,13 +378,16 @@ async function handleRequestAccept(interaction) {
 	const request = pendingRequests.get(requesterId);
 
 	if (!request) {
-		await interaction.reply({ content: config.messages.requestNotFound, ephemeral: true });
-		return;
+		return interaction.update({ content: config.messages.requestNotFound, embeds: [], components: [] });
 	}
 
 	if (!request.owners.some(owner => owner.id === interaction.user.id)) {
 		return interaction.reply({ content: config.messages.onlyOwner, ephemeral: true });
 	}
+
+	// Defer interaction and delete the original message
+	await interaction.deferUpdate();
+	await interaction.message.delete();
 
 	const acceptEmbed = new EmbedBuilder()
 		.setTitle(config.embeds.requestAccepted.title)
@@ -399,13 +402,18 @@ async function handleRequestAccept(interaction) {
 				.setStyle(ButtonStyle.Primary)
 		);
 
-	// Request speichern für Join
+	// Mark request as accepted
 	pendingRequests.set(requesterId, { ...request, accepted: true });
 
-	await interaction.update({
+	// Send a new message pinging the requester in a spoiler
+	await interaction.channel.send({
+		content: `||<@${requesterId}>||`,
 		embeds: [acceptEmbed],
 		components: [joinRow]
 	});
+
+	// Send an ephemeral confirmation to the owner
+	await interaction.followUp({ content: 'Die Anfrage wurde angenommen.', ephemeral: true });
 }
 
 // Request Decline Handler
