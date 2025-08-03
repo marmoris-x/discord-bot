@@ -414,12 +414,16 @@ async function handleRequestDecline(interaction) {
 	const request = pendingRequests.get(requesterId);
 
 	if (!request) {
-		return interaction.reply({ content: config.messages.requestNotFound, ephemeral: true });
+		return interaction.update({ content: config.messages.requestNotFound, embeds: [], components: [] });
 	}
 
 	if (!request.owners.some(owner => owner.id === interaction.user.id)) {
 		return interaction.reply({ content: config.messages.onlyOwner, ephemeral: true });
 	}
+
+	// Defer interaction and delete the original message
+	await interaction.deferUpdate();
+	await interaction.message.delete();
 
 	const declineEmbed = new EmbedBuilder()
 		.setTitle(config.embeds.requestDeclined.title)
@@ -433,12 +437,18 @@ async function handleRequestDecline(interaction) {
 
 	const row = new ActionRowBuilder().addComponents(deleteButton);
 
-	pendingRequests.delete(requesterId);
-
-	await interaction.update({
+	// Send a new message pinging the requester in a spoiler
+	await interaction.channel.send({
+		content: `||<@${requesterId}>||`,
 		embeds: [declineEmbed],
 		components: [row]
 	});
+
+	// Remove the pending request
+	pendingRequests.delete(requesterId);
+
+	// Send an ephemeral confirmation to the owner
+	await interaction.followUp({ content: 'Die Anfrage wurde abgelehnt.', ephemeral: true });
 }
 
 // Delete Message Handler
