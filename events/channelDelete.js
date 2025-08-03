@@ -15,9 +15,8 @@ module.exports = {
             return;
         }
 
-        // Entferne nur "open" oder "closed", behalte aber die Nummer (z.B. "sonstiges-closed-0446" → "sonstiges-0446")
-        const channelPattern = channel.name.replace(/-(?:open|closed)-/, '-');
-        const voiceChannelName = `voice-${channelPattern}`;
+        // Wenn der Kanal "closed" im Namen hat, suche nach der "open"-Version des Sprachkanals.
+        const voiceChannelName = `voice-${channel.name.replace('-closed-', '-open-')}`;
         console.log(`[DEBUG] Suche nach Sprachkanal mit Name: ${voiceChannelName} in Zielkategorie ${TARGET_CATEGORY_ID}`);
         
         const channels = await channel.guild.channels.fetch();
