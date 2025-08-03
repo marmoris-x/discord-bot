@@ -35,8 +35,7 @@ module.exports = {
 		const landChoice = module.exports.data.options.find(opt => opt.name === 'land').choices.find(ch => ch.value === landValue);
 		const landName = landChoice ? landChoice.name : landValue;
 
-		const isPublic = interaction.channel.name.toLowerCase().includes('gebetszeiten');
-		await interaction.deferReply({ ephemeral: !isPublic });
+		await interaction.deferReply({ ephemeral: true });
 
 		try {
 			// Step 1: Geocode and verify the location
@@ -109,7 +108,13 @@ module.exports = {
 			             )
 				.setFooter({ text: `Methode: \`Custom\` | Fajr: \`13.8\`° | Isha: \`15\`° | Zeitzone: \`${data.meta.timezone}\` | Stadt: ${stadt}` });
 			
-			await interaction.editReply({ embeds: [embed] });
+			const isPublic = interaction.channel.name.toLowerCase().includes('gebetszeiten');
+			if (isPublic) {
+				await interaction.deleteReply();
+				await interaction.channel.send({ embeds: [embed] });
+			} else {
+				await interaction.editReply({ embeds: [embed] });
+			}
 
 		} catch (error) {
 			console.error(error);
