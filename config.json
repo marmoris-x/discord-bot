@@ -1,0 +1,78 @@
+{
+  "colors": {
+    "success": "#22C55E",
+    "secondary": "#3B82F6",
+    "warning": "#FBBF24",
+    "danger": "#EF4444",
+    "primary": "#3B82F6"
+  },
+  "embeds": {
+    "voiceOwner": {
+      "title": "Voice Owner",
+      "description": "Der Voice-Channel {channel} ist im Besitz von {owner}.",
+      "footer": "Möchtest du diesem (privaten) Voice Channel beitreten? Klicke auf den Button unten, um eine Anfrage an den Voice Owner zu senden."
+    },
+    "cooldown": {
+      "title": "Cooldown bis {time}",
+      "description": "Du bist im Cooldown. Bitte versuche es erneut in {minutes} Minuten!"
+    },
+    "voiceRequest": {
+      "title": "{user} möchte deinem Voice Channel beitreten.",
+      "description": "Möchtest du die Anfrage annehmen oder ablehnen?"
+    },
+    "requestSent": {
+      "title": "Anfrage gesendet",
+      "description": "Der Voice Owner wurde über deine Beitrittsanfrage informiert. Du erhältst eine Benachrichtigung, sobald sie bearbeitet wurde.\n\nBitte beachte, dass der Voice Owner nicht verpflichtet ist zu antworten."
+    },
+    "actionNotAllowed": {
+      "title": "Aktion nicht erlaubt",
+      "description": "Nur der Voice Owner ({owner}) kann diese Aktion ausführen.",
+      "footer": "Bist du bereits Mitglied dieses Sprachkanals? Du könntest den Voice Owner bei Bedarf auf die ausstehende Anfrage aufmerksam machen."
+    },
+    "requestAccepted": {
+      "title": "Anfrage angenommen",
+      "description": "Deine Anfrage wurde angenommen! Klicke auf \"Voice beitreten\" um dem Channel beizutreten."
+    },
+    "requestDeclined": {
+      "title": "Anfrage abgelehnt",
+      "description": "Deine Anfrage wurde abgelehnt. Bitte respektiere diese Entscheidung und sende keine weiteren Anfragen."
+    }
+  },
+  "buttons": {
+    "sendRequest": "Anfrage senden",
+    "editVoice": "Voice bearbeiten",
+    "kickVoice": "Voice kicken",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "joinVoice": "Voice beitreten"
+  },
+  "modals": {
+    "editVoice": {
+      "title": "Voice Channel bearbeiten",
+      "nameLabel": "Channel Name",
+      "limitLabel": "User Limit (0 = unbegrenzt)"
+    }
+  },
+  "messages": {
+    "error": "Ein Fehler ist aufgetreten. Bitte versuche es später erneut.",
+    "channelNotFound": "❌ Voice Channel nicht gefunden.",
+    "ownerNotFound": "❌ Konnte den Voice Owner nicht ermitteln.",
+    "selfRequest": "Du kannst dir nicht selbst eine Anfrage senden.",
+    "requestNotFound": "❌ Anfrage nicht gefunden oder bereits bearbeitet.",
+    "notYourRequest": "❌ Das ist nicht deine Anfrage.",
+    "mustBeInVoice": "❌ Du musst zuerst einem öffentlichen Voice Channel beitreten, bevor du verschoben werden kannst.",
+    "moveSuccess": "✅ Du wurdest erfolgreich in den Voice Channel verschoben!",
+    "moveError": "❌ Fehler beim Verschieben in den Voice Channel.",
+    "kickSuccess": "✅ {user} wurde aus dem Voice Channel gekickt.",
+    "kickError": "❌ Fehler beim Kicken des Users.",
+    "noUsersToKick": "❌ Keine anderen User im Voice Channel.",
+    "invalidLimit": "❌ Ungültiges User Limit (0-99).",
+    "editSuccess": "✅ Voice Channel erfolgreich bearbeitet!",
+    "noChanges": "Es wurden keine Änderungen vorgenommen.",
+    "editCooldown": "⏰ Du kannst den Channel-Namen erst in {seconds} Sekunden wieder bearbeiten.",
+    "onlyOwner": "Nur der Voice Owner kann diese Anfrage bearbeiten.",
+    "cooldown": "⏰ Du bist im Cooldown. Bitte versuche es in {minutes} Minuten erneut (bis {time} Uhr).",
+    "requestSent": "✅ Deine Anfrage wurde an den Voice Owner gesendet.",
+    "actionNotAllowed": "❌ Nur der Voice Owner ({owner}) kann diese Aktion ausführen."
+  }
+}
