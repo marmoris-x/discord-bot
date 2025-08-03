@@ -34,7 +34,7 @@
       "description": "Deine Anfrage wurde angenommen! Klicke auf \"Voice beitreten\" um dem Channel beizutreten."
     },
     "requestDeclined": {
-      "title": "Anfrage abgelehnt",
+      "title": "❌ Anfrage abgelehnt",
       "description": "Deine Anfrage wurde abgelehnt. Bitte respektiere diese Entscheidung und sende keine weiteren Anfragen."
     }
   },
@@ -44,7 +44,8 @@
     "kickVoice": "Voice kicken",
     "accept": "Annehmen",
     "decline": "Ablehnen",
-    "joinVoice": "Voice beitreten"
+    "joinVoice": "Voice beitreten",
+    "delete": "Löschen"
   },
   "modals": {
     "editVoice": {

@@ -68,6 +68,8 @@ async function handleButtonInteraction(interaction) {
 			await handleRequestDecline(interaction);
 		} else if (customId.startsWith('join_voice_')) {
 			await handleJoinVoice(interaction);
+		} else if (customId.startsWith('delete_message_')) {
+			await handleDeleteMessage(interaction);
 		}
 	} catch (error) {
 		console.error('Fehler beim Verarbeiten der Button-Interaktion:', error);
@@ -424,12 +426,35 @@ async function handleRequestDecline(interaction) {
 		.setDescription(config.embeds.requestDeclined.description)
 		.setColor(config.colors.danger);
 
+	const deleteButton = new ButtonBuilder()
+		.setCustomId(`delete_message_${requesterId}`)
+		.setLabel(config.buttons.delete)
+		.setStyle(ButtonStyle.Secondary);
+
+	const row = new ActionRowBuilder().addComponents(deleteButton);
+
 	pendingRequests.delete(requesterId);
 
 	await interaction.update({
 		embeds: [declineEmbed],
-		components: []
+		components: [row]
 	});
+}
+
+// Delete Message Handler
+async function handleDeleteMessage(interaction) {
+	const requesterId = interaction.customId.split('_')[2];
+
+	if (interaction.user.id !== requesterId) {
+		return interaction.reply({ content: 'Nur der Anfragesteller kann diese Nachricht löschen.', ephemeral: true });
+	}
+
+	try {
+		await interaction.message.delete();
+	} catch (error) {
+		console.error('Fehler beim Löschen der Nachricht:', error);
+		await interaction.reply({ content: 'Fehler beim Löschen der Nachricht.', ephemeral: true });
+	}
 }
 
 // Join Voice Handler
