@@ -15,15 +15,17 @@ module.exports = {
             return;
         }
 
-        const voiceChannelName = `voice-${channel.name}`;
-        console.log(`[DEBUG] Suche nach Sprachkanal mit Name: ${voiceChannelName} in Zielkategorie ${TARGET_CATEGORY_ID}`);
+        // Extrahiere das Basis-Pattern (z.B. "sonstiges" aus "sonstiges-closed-0446")
+        const channelPattern = channel.name.replace(/-(?:open|closed)-\d{4}$/, '');
+        const voiceChannelPattern = `voice-${channelPattern}`;
+        console.log(`[DEBUG] Suche nach Sprachkanal mit Pattern: ${voiceChannelPattern}-* in Zielkategorie ${TARGET_CATEGORY_ID}`);
         
         const channels = await channel.guild.channels.fetch();
         console.log(`[DEBUG] Insgesamt ${channels.size} Kanäle auf dem Server gefunden`);
         
-        // Suche EXPLIZIT nach einem Sprachkanal in der ZIELKATEGORIE
+        // Suche nach einem Sprachkanal, der dem Pattern entspricht
         const voiceChannel = channels.find(
-            (ch) => ch.name === voiceChannelName &&
+            (ch) => ch.name.startsWith(voiceChannelPattern) &&
                    ch.type === ChannelType.GuildVoice &&
                    ch.parentId === TARGET_CATEGORY_ID
         );
