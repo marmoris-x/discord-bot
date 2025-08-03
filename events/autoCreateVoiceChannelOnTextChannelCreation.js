@@ -16,41 +16,38 @@ module.exports = {
         }
 
         try {
-            const originalPermissions = channel.permissionOverwrites.cache;
-            const voiceChannelPermissions = [];
-
-            // Übernehme @everyone und Benutzer-Berechtigungen vom Textkanal
-            originalPermissions.forEach(overwrite => {
-                if (overwrite.type === OverwriteType.Member || overwrite.id === channel.guild.roles.everyone.id) {
-                    voiceChannelPermissions.push({
-                        id: overwrite.id,
-                        type: overwrite.type,
-                        allow: overwrite.allow.bitfield,
-                        deny: overwrite.deny.bitfield,
-                    });
-                }
-            });
-
-            // Füge die spezielle Rollenberechtigung für den Sprachkanal hinzu
-            voiceChannelPermissions.push({
-                id: EXEMPT_ROLE_ID,
-                type: OverwriteType.Role,
-                allow: new PermissionsBitField([
-                    PermissionsBitField.Flags.ViewChannel,
-                    PermissionsBitField.Flags.Connect,
-                    PermissionsBitField.Flags.Speak,
-                ]).bitfield,
-                deny: new PermissionsBitField([
-                    PermissionsBitField.Flags.SendMessages,
-                ]).bitfield,
-            });
-
-            // Erstellt den zugehörigen Sprachkanal mit den neuen Berechtigungen
+            // Erstellt den Sprachkanal initial mit den Berechtigungen des Textkanals
             const voiceChannel = await channel.guild.channels.create({
                 name: `voice-${channel.name}`,
                 type: ChannelType.GuildVoice,
                 parent: channel.parentId,
-                permissionOverwrites: voiceChannelPermissions,
+                permissionOverwrites: channel.permissionOverwrites.cache,
+            });
+
+            // Iteriere durch die Berechtigungen des NEUEN Sprachkanals und modifiziere sie
+            for (const overwrite of voiceChannel.permissionOverwrites.cache.values()) {
+                // Fall 1: Rollen-Berechtigung
+                if (overwrite.type === OverwriteType.Role) {
+                    // Lösche alle Rollen-Berechtigungen, außer @everyone und die Ausnahme-Rolle
+                    if (overwrite.id !== EXEMPT_ROLE_ID && overwrite.id !== channel.guild.id) {
+                        await overwrite.delete();
+                    }
+                }
+                // Fall 2: Benutzer-Berechtigung
+                else if (overwrite.type === OverwriteType.Member) {
+                    const member = await channel.guild.members.fetch(overwrite.id).catch(() => null);
+                    if (member && !member.user.bot) {
+                        // Entziehe dem menschlichen Nutzer die Schreibrechte
+                        await overwrite.edit({ SendMessages: false });
+                    }
+                }
+            }
+
+            // Setze die expliziten Rechte für die Ausnahme-Rolle im Sprachkanal
+            await voiceChannel.permissionOverwrites.edit(EXEMPT_ROLE_ID, {
+                ViewChannel: true,
+                Connect: true,
+                Speak: true,
             });
             console.log(`[Auto-Voice] Sprachkanal #${voiceChannel.name} für #${channel.name} erstellt.`);
 
