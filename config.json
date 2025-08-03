@@ -31,11 +31,21 @@
     },
     "requestAccepted": {
       "title": "Anfrage angenommen",
-      "description": "Deine Anfrage wurde angenommen! Klicke auf \"Voice beitreten\" um dem Channel beizutreten.\n\nWICHTIG: Du musst zuerst einem öffentlichen Voice-Channel beitreten (z.B. <#1233791786858582107>), damit du verschoben werden kannst."
+      "description": "Deine Anfrage wurde angenommen! Klicke auf \"Voice beitreten\" um dem Channel beizutreten.\n\nWICHTIG: Du musst zuerst einem öffentlichen Voice-Channel beitreten (z.B. <#{joinChannelId}>), damit du verschoben werden kannst."
     },
     "requestDeclined": {
       "title": "❌ Anfrage abgelehnt",
       "description": "Deine Anfrage wurde abgelehnt. Bitte respektiere diese Entscheidung und sende keine weiteren Anfragen."
+    }
+  },
+  "voiceOwner": {
+    "categories": {
+      "1109869600721621125": {
+        "joinChannelId": "1233791786858582107"
+      },
+      "1109877156135305300": {
+        "joinChannelId": "1290733711666446490"
+      }
     }
   },
   "buttons": {

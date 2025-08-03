@@ -1,7 +1,8 @@
 const { Events, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder } = require('discord.js');
 const config = require('../config.json');
 
-const TARGET_CATEGORY_ID = '1109869600721621125';
+const { categories } = require('../config.json').voiceOwner;
+const validCategoryIds = Object.keys(categories);
 
 // Cooldown Maps
 const requestCooldowns = new Map();
@@ -108,7 +109,7 @@ async function handleVoiceRequest(interaction) {
 	const channelId = interaction.customId.split('_')[2];
 	const targetVoiceChannel = interaction.guild.channels.cache.get(channelId);
 	
-	if (!targetVoiceChannel || targetVoiceChannel.parentId !== TARGET_CATEGORY_ID) {
+	if (!targetVoiceChannel || !validCategoryIds.includes(targetVoiceChannel.parentId)) {
 		await interaction.reply({ content: config.messages.channelNotFound, ephemeral: true });
 		return;
 	}
@@ -193,7 +194,7 @@ async function handleVoiceEdit(interaction) {
 
 	const voiceChannel = interaction.guild.channels.cache.get(channelId);
 	
-	if (!voiceChannel || voiceChannel.parentId !== TARGET_CATEGORY_ID) {
+	if (!voiceChannel || !validCategoryIds.includes(voiceChannel.parentId)) {
 		await interaction.reply({ content: config.messages.channelNotFound, ephemeral: true });
 		return;
 	}
@@ -243,7 +244,7 @@ async function handleVoiceKick(interaction) {
 
 	const voiceChannel = interaction.guild.channels.cache.get(channelId);
 	
-	if (!voiceChannel || voiceChannel.parentId !== TARGET_CATEGORY_ID) {
+	if (!voiceChannel || !validCategoryIds.includes(voiceChannel.parentId)) {
 		await interaction.reply({ content: config.messages.channelNotFound, ephemeral: true });
 		return;
 	}
@@ -391,9 +392,12 @@ async function handleRequestAccept(interaction) {
 	await interaction.deferUpdate();
 	await interaction.message.delete();
 
+	const categoryConfig = categories[request.targetChannel.parentId];
+	const joinChannelId = categoryConfig ? categoryConfig.joinChannelId : '0';
+
 	const acceptEmbed = new EmbedBuilder()
 		.setTitle(config.embeds.requestAccepted.title)
-		.setDescription(config.embeds.requestAccepted.description)
+		.setDescription(config.embeds.requestAccepted.description.replace('{joinChannelId}', joinChannelId))
 		.setColor(config.colors.success);
 
 	const joinRow = new ActionRowBuilder()
@@ -499,8 +503,10 @@ async function handleJoinVoice(interaction) {
 	const currentVoiceChannel = member.voice.channel;
 
 	if (!currentVoiceChannel) {
+		const categoryConfig = categories[targetChannel.parentId];
+		const joinChannelId = categoryConfig ? categoryConfig.joinChannelId : '0';
 		await interaction.reply({
-			content: config.messages.mustBeInVoice,
+			content: config.messages.mustBeInVoice.replace('{joinChannelId}', joinChannelId),
 			ephemeral: true
 		});
 		return;
