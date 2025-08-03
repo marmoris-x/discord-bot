@@ -8,8 +8,7 @@ const ALLOWED_POLL_ROLES = [
     '979575516568911902',  // Umfragen freigeschaltet
     '975374626169438218',  // Umfragen freigeschaltet
     '1045748082798755911', // Umfragen freigeschaltet
-    '1105937534091010158', // Umfragen freigeschaltet
-    '1135240587935748236'  // Testrolle
+    '1105937534091010158'  // Umfragen freigeschaltet
 ];
 
 module.exports = {
