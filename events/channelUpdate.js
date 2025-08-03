@@ -66,16 +66,6 @@ module.exports = {
             return;
         }
         
-        // Berechtigungen des alten Owners entfernen, wenn ein Wechsel stattgefunden hat
-        if (oldChannelOwner) {
-        	try {
-        		await newChannel.permissionOverwrites.delete(oldChannelOwner.id, 'Owner hat gewechselt');
-        		console.log(`[DEBUG] Berechtigungen für alten Owner ${oldChannelOwner.displayName} entfernt.`);
-        	} catch (error) {
-        		console.error(`[ERROR] Fehler beim Entfernen der Berechtigungen des alten Owners:`, error);
-        	}
-        }
-      
         console.log(`[DEBUG] Owner-Wechsel erkannt, sende Nachricht...`);
 
         // Alte Nachricht suchen und löschen
