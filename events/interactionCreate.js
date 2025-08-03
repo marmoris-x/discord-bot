@@ -392,8 +392,7 @@ async function handleRequestAccept(interaction) {
 	const acceptEmbed = new EmbedBuilder()
 		.setTitle(config.embeds.requestAccepted.title)
 		.setDescription(config.embeds.requestAccepted.description)
-		.setColor(config.colors.success)
-		.setFooter({ text: config.embeds.requestAccepted.footer });
+		.setColor(config.colors.success);
 
 	const joinRow = new ActionRowBuilder()
 		.addComponents(
