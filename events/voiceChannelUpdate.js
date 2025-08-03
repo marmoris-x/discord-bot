@@ -5,9 +5,16 @@ const config = require('../config.json');
 const channelMessageCooldowns = new Map();
 const COOLDOWN_TIME = 30000; // 30 Sekunden
 
+const TARGET_CATEGORY_ID = '1109869600721621125';
+
 module.exports = {
     name: Events.ChannelUpdate,
     async execute(oldChannel, newChannel) {
+        // Nur auf die Zielkategorie reagieren
+        if (newChannel.parentId !== TARGET_CATEGORY_ID) {
+            return;
+        }
+
         console.log(`[DEBUG] Channel Update: ${newChannel.name} (Type: ${newChannel.type})`);
         
         // Nur bei Voice Channels reagieren

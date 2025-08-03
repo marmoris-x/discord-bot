@@ -1,6 +1,8 @@
 const { Events, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder } = require('discord.js');
 const config = require('../config.json');
 
+const TARGET_CATEGORY_ID = '1109869600721621125';
+
 // Cooldown Maps
 const requestCooldowns = new Map();
 const editCooldowns = new Map();
@@ -106,7 +108,7 @@ async function handleVoiceRequest(interaction) {
 	const channelId = interaction.customId.split('_')[2];
 	const targetVoiceChannel = interaction.guild.channels.cache.get(channelId);
 	
-	if (!targetVoiceChannel) {
+	if (!targetVoiceChannel || targetVoiceChannel.parentId !== TARGET_CATEGORY_ID) {
 		await interaction.reply({ content: config.messages.channelNotFound, ephemeral: true });
 		return;
 	}
@@ -191,7 +193,7 @@ async function handleVoiceEdit(interaction) {
 
 	const voiceChannel = interaction.guild.channels.cache.get(channelId);
 	
-	if (!voiceChannel) {
+	if (!voiceChannel || voiceChannel.parentId !== TARGET_CATEGORY_ID) {
 		await interaction.reply({ content: config.messages.channelNotFound, ephemeral: true });
 		return;
 	}
@@ -241,7 +243,7 @@ async function handleVoiceKick(interaction) {
 
 	const voiceChannel = interaction.guild.channels.cache.get(channelId);
 	
-	if (!voiceChannel) {
+	if (!voiceChannel || voiceChannel.parentId !== TARGET_CATEGORY_ID) {
 		await interaction.reply({ content: config.messages.channelNotFound, ephemeral: true });
 		return;
 	}
