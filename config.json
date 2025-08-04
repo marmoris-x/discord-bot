@@ -1,4 +1,5 @@
 {
+  "clientId": "1400242922259218484",
   "colors": {
     "success": "#22C55E",
     "secondary": "#3B82F6",
@@ -85,5 +86,21 @@
     "cooldown": "⏰ Du bist im Cooldown. Bitte versuche es in {minutes} Minuten erneut (bis {time} Uhr).",
     "requestSent": "✅ Deine Anfrage wurde an den Voice Owner gesendet.",
     "actionNotAllowed": "❌ Nur der Voice Owner ({owner}) kann diese Aktion ausführen."
+  },
+  "messageLimiter": {
+    "channels": [
+      "1015585055357292614",
+      "1013790235852820491"
+    ],
+    "limit": 2,
+    "dmEmbed": {
+      "title": "Beitragslimit erreicht",
+      "description": "As salamu alaikum {user},\n\ndu hast dein heutiges Limit von **{limit} Beiträgen** im Kanal **{channel}** erreicht.\nDu kannst dort erst wieder {timestamp} posten.\n\nViel Spaß weiterhin!",
+      "footer": {
+        "text": "MyMuslim Community",
+        "iconURL": "https://cdn.discordapp.com/icons/973967293073743982/a_886a4c4b8bd18b543afe7968c6047fda.gif"
+      },
+      "color": "#E53E3E"
+    }
   }
 }
