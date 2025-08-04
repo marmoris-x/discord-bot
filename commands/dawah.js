@@ -3,7 +3,7 @@ const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('dawah')
-        .setDescription('Entfernt eine Rolle und fügt eine andere hinzu.')
+        .setDescription('Entfernt die Rolle @NichtVerifiziert und gibt die Rolle @auf der Suche.')
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('Der Benutzer, dessen Rollen aktualisiert werden sollen.')
