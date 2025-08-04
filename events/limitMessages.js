@@ -48,10 +48,19 @@ module.exports = {
             await message.delete().catch(console.error);
 
             // Calculate next midnight in Vienna
-            const todayStr = new Intl.DateTimeFormat('sv-SE', { timeZone }).format(Date.now());
-            const tomorrowDate = new Date(todayStr);
-            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-            const timestamp = Math.floor(tomorrowDate.getTime() / 1000);
+            const now = new Date();
+            // Get the offset between UTC and Vienna time. This handles DST automatically.
+            const utcDate = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
+            const viennaDate = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Vienna' }));
+            const offset = viennaDate.getTime() - utcDate.getTime();
+
+            // Get midnight UTC of the next day
+            const todayStr = new Intl.DateTimeFormat('sv-SE', { timeZone }).format(now);
+            const tomorrowDateUTC = new Date(todayStr);
+            tomorrowDateUTC.setDate(tomorrowDateUTC.getDate() + 1);
+
+            // Adjust the UTC midnight time by the offset to get the correct Vienna midnight timestamp
+            const timestamp = Math.floor((tomorrowDateUTC.getTime() - offset) / 1000);
 
             const embed = new EmbedBuilder()
                 .setTitle(dmEmbed.title)
