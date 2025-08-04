@@ -6,12 +6,16 @@ const config = require('../config.json');
 const userMessageCounts = new Map();
 
 // Helper function to check if a timestamp is from the same day
-function isSameDay(ts1, ts2) {
-    const d1 = new Date(ts1);
-    const d2 = new Date(ts2);
-    return d1.getFullYear() === d2.getFullYear() &&
-           d1.getMonth() === d2.getMonth() &&
-           d1.getDate() === d2.getDate();
+// Helper function to check if a timestamp is from the same day in a specific timezone
+// We use sv-SE locale because it gives a YYYY-MM-DD format.
+function isSameDay(ts1, ts2, timeZone) {
+    const formatter = new Intl.DateTimeFormat('sv-SE', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        timeZone: timeZone,
+    });
+    return formatter.format(ts1) === formatter.format(ts2);
 }
 
 module.exports = {
@@ -25,6 +29,7 @@ module.exports = {
         const userId = message.author.id;
         const channelId = message.channel.id;
         const now = Date.now();
+        const timeZone = 'Europe/Vienna';
 
         if (!userMessageCounts.has(userId)) {
             userMessageCounts.set(userId, new Map());
@@ -32,7 +37,7 @@ module.exports = {
 
         const userChannels = userMessageCounts.get(userId);
 
-        if (!userChannels.has(channelId) || !isSameDay(userChannels.get(channelId).timestamp, now)) {
+        if (!userChannels.has(channelId) || !isSameDay(userChannels.get(channelId).timestamp, now, timeZone)) {
             userChannels.set(channelId, { count: 0, timestamp: now });
         }
 
@@ -42,9 +47,11 @@ module.exports = {
             // Limit reached
             await message.delete().catch(console.error);
 
-            const nextPostTime = new Date();
-            nextPostTime.setHours(24, 0, 0, 0); // Next day at 00:00
-            const timestamp = Math.floor(nextPostTime.getTime() / 1000);
+            // Calculate next midnight in Vienna
+            const todayStr = new Intl.DateTimeFormat('sv-SE', { timeZone }).format(Date.now());
+            const tomorrowDate = new Date(todayStr);
+            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+            const timestamp = Math.floor(tomorrowDate.getTime() / 1000);
 
             const embed = new EmbedBuilder()
                 .setTitle(dmEmbed.title)
