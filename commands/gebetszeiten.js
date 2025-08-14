@@ -81,8 +81,11 @@ module.exports = {
 			const monthDE = germanMonths[gregorian.month.en] || gregorian.month.en;
 			const weekdayDE = germanWeekdays[gregorian.weekday.en] || gregorian.weekday.en;
 
+			// Generate random color for embed
+			const randomColor = Math.floor(Math.random() * 16777215);
+			
 			const embed = new EmbedBuilder()
-				.setColor(0xE6007E)
+				.setColor(randomColor)
 				.setTitle(`📅 Gebetszeiten für \`${gregorian.day}. ${monthDE} ${gregorian.year}\` in ${normalizedCity}, ${landName}`)
 				.setDescription(
 			                 `__Gebetszeiten bereitgestellt von MyMuslim Community__\n\n` +
