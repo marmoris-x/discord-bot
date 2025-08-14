@@ -109,7 +109,7 @@ module.exports = {
 			                 `🌗 3/3 Nacht   ${timings.Lastthird}\n` +
 			                 '```'
 			             )
-				.setFooter({ text: `Methode: \`Custom\` | Fajr: \`13.8\`° | Isha: \`15\`° | Zeitzone: \`${data.meta.timezone}\` | Stadt: ${stadt}` });
+				.setFooter({ text: `Methode: \`Custom\` | Fajr: \`13.8\`° | Isha: \`15\`° | Zeitzone: \`${data.meta.timezone}\` | Stadt: ${normalizedCity}` });
 			
 			const isPublic = interaction.channel.name.toLowerCase().includes('gebetszeiten');
 			if (isPublic) {
