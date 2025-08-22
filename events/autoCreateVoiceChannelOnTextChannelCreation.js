@@ -51,12 +51,11 @@ module.exports = {
             });
             console.log(`[Auto-Voice] Sprachkanal #${voiceChannel.name} für #${channel.name} erstellt.`);
 
-            // Füge der neuen Rolle Berechtigungen zum TEXTKANAL hinzu (Sehen/Schreiben), damit sie die Nachricht lesen kann
+            // Entziehe der Ausnahme-Rolle die Berechtigung, den TEXTKANAL zu sehen
             await channel.permissionOverwrites.edit(EXEMPT_ROLE_ID, {
-                ViewChannel: true,
-                SendMessages: true,
+                ViewChannel: false,
             });
-            console.log(`[Auto-Voice] Berechtigungen für Rolle ${EXEMPT_ROLE_ID} im Textkanal #${channel.name} gesetzt.`);
+            console.log(`[Auto-Voice] Ansichtsberechtigung für Rolle ${EXEMPT_ROLE_ID} im Textkanal #${channel.name} entzogen.`);
 
             // Sende nach einer Sekunde die Willkommensnachricht
             setTimeout(async () => {
